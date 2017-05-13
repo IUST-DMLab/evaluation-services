@@ -2,6 +2,7 @@ package ir.ac.iust.dml.kg.evaluation.services.web.rest;
 
 import io.swagger.annotations.Api;
 import ir.ac.iust.dml.kg.evaluation.services.web.rest.data.SampleOutput;
+import ir.ac.iust.dml.kg.evaluation.services.web.rest.data.SamplePostData;
 import ir.ac.iust.dml.kg.search.logic.data.SearchResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,12 @@ public class EntityEvaluationRestServices {
   @RequestMapping(value = "/next", method = RequestMethod.GET)
   @ResponseBody
   public SearchResult next() throws Exception {
+    return null;
+  }
+
+  @RequestMapping(value = "/approve", method = RequestMethod.POST)
+  @ResponseBody
+  public SearchResult next(@RequestBody SamplePostData data) throws Exception {
     return null;
   }
 }
