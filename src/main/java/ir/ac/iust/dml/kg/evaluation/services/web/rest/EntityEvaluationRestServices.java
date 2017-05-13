@@ -28,7 +28,7 @@ public class EntityEvaluationRestServices {
 
   @RequestMapping(value = "/approve", method = RequestMethod.POST)
   @ResponseBody
-  public SearchResult next(@RequestBody SamplePostData data) throws Exception {
-    return null;
+  public boolean approve(@RequestBody SamplePostData data) throws Exception {
+    return false;
   }
 }
