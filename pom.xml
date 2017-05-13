@@ -4,10 +4,11 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ir.ac.iust.dml.kg.evaluation</groupId>
-  <artifactId>services</artifactId>
-  <version>0.1.0</version>
-  <name>Search Evaluation</name>
+  <groupId>ir.ac.iust.dml.kg.search</groupId>
+  <artifactId>evaluation-services</artifactId>
+  <version>0.2.0</version>
+  <name>Search evaluation service project</name>
+
 
   <properties>
     <spring-framework.version>4.3.2.RELEASE</spring-framework.version>
@@ -17,19 +18,20 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <!--<archive>
+          <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>ir.ac.iust.dml.kg.search.services.Application</mainClass>
+              <mainClass>ir.ac.iust.dml.kg.search.evaluation.Application</mainClass>
               <classpathPrefix>lib/</classpathPrefix>
             </manifest>
-          </archive>-->
+          </archive>
         </configuration>
       </plugin>
       <plugin>
@@ -52,14 +54,16 @@
           </execution>
         </executions>
       </plugin>
+
+
     </plugins>
   </build>
 
   <dependencies>
     <dependency>
       <groupId>ir.ac.iust.dml.kg.search</groupId>
-      <artifactId>evaluation</artifactId>
-      <version>0.1.0</version>
+      <artifactId>searcher</artifactId>
+      <version>0.2.0</version>
     </dependency>
     <!-- Spring and Transactions -->
     <dependency>
