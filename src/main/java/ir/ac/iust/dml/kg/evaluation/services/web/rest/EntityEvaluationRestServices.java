@@ -1,9 +1,19 @@
 package ir.ac.iust.dml.kg.evaluation.services.web.rest;
 
 import io.swagger.annotations.Api;
-import ir.ac.iust.dml.kg.evaluation.services.web.rest.data.SampleOutput;
-import ir.ac.iust.dml.kg.evaluation.services.web.rest.data.SamplePostData;
-import ir.ac.iust.dml.kg.search.logic.data.SearchResult;
+import ir.ac.iust.dml.kg.evaluation.model.Query;
+import ir.ac.iust.dml.kg.evaluation.model.UserResponse;
+import ir.ac.iust.dml.kg.evaluation.service.QueryService;
+import ir.ac.iust.dml.kg.evaluation.service.UserResponseService;
+import ir.ac.iust.dml.kg.evaluation.services.web.rest.factory.EvaluationServicesFactory;
+import ir.ac.iust.dml.kg.evaluation.services.web.rest.model.QueryResult;
+import ir.ac.iust.dml.kg.evaluation.services.web.rest.model.SimpleSearchResult;
+import ir.ac.iust.dml.kg.evaluation.services.web.rest.service.SearchRestService;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,24 +21,81 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "evaluation", description = "سرویس‌های ارزیابی")
 public class EntityEvaluationRestServices {
 
-  public EntityEvaluationRestServices() throws Exception {
-  }
+    private  QueryService queryService;
+    private  UserResponseService userResponseService;
+    private final  SearchRestService searchRestService;
+    
+    private final EvaluationServicesFactory evaluationServicesFactory;
 
-  @RequestMapping(value = "/hello", method = RequestMethod.GET)
-  @ResponseBody
-  public SampleOutput name(@RequestParam(required = true) String name) throws Exception {
-    return new SampleOutput(name);
-  }
+    @Autowired
+    public EntityEvaluationRestServices(SearchRestService searchRestService, EvaluationServicesFactory evaluationServicesFactory) {
+        this.searchRestService = searchRestService;
+        this.evaluationServicesFactory = evaluationServicesFactory;
+    }
 
-  @RequestMapping(value = "/next", method = RequestMethod.GET)
-  @ResponseBody
-  public SearchResult next() throws Exception {
-    return null;
-  }
 
-  @RequestMapping(value = "/approve", method = RequestMethod.POST)
-  @ResponseBody
-  public boolean approve(@RequestBody SamplePostData data) throws Exception {
-    return false;
-  }
+
+    @PostConstruct
+    private void init()
+    {
+        this.userResponseService = evaluationServicesFactory.getUserResponseService();
+        this.queryService = evaluationServicesFactory.getQueryService();       
+    }
+
+    @RequestMapping(value = "/next", method = RequestMethod.GET)
+    @ResponseBody
+    public QueryResult getUnreadQueryResult(@RequestParam(required = true) String personId) throws Exception {
+        Query query = queryService.getUnreadQueryByPersonId(personId);
+        List<SimpleSearchResult> searchResults = searchRestService.search(query.getQ());
+        if (query != null) {
+            QueryResult queryResult = new QueryResult();
+            queryResult.setQuery(query);
+            queryResult.setSearchResults(searchResults);
+            return queryResult;
+        }
+
+        return null;
+    }
+
+    @RequestMapping(value = "/submit", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean submit(@RequestBody UserResponse userResponse) throws Exception {
+        if (userResponse != null) {
+            userResponseService.saveUserResponse(userResponse);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @RequestMapping(value = "/allqueries", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Query> getAllQueries() throws Exception {
+        return queryService.getAllQueries();
+    }
+    
+    @RequestMapping(value = "/addquery", method = RequestMethod.POST)
+    @ResponseBody
+    public void addQuery(@RequestBody Query query) throws Exception {
+        this.queryService.saveQuery(query);
+    }
+
+    private QueryResult getFakeQueryResult() {
+        QueryResult queryResult = new QueryResult();
+        Query query = new Query();
+        query.setQ("بازیگران دورهمی");
+        queryResult.setQuery(query);
+
+        SimpleSearchResult result1 = new SimpleSearchResult("https://fa.wikipedia.org/wiki/%D9%85%D9%87%D8%B1%D8%A7%D9%86_%D9%85%D8%AF%DB%8C%D8%B1%DB%8C", "مهران_مدیری");
+        SimpleSearchResult result2 = new SimpleSearchResult("https://fa.wikipedia.org/wiki/%D8%B3%DB%8C%D8%A7%D9%85%DA%A9_%D8%A7%D9%86%D8%B5%D8%A7%D8%B1%DB%8C", "سیامک_انصاری");
+        SimpleSearchResult result3 = new SimpleSearchResult("https://fa.wikipedia.org/wiki/%D8%B1%D8%A7%D9%85%D8%A8%D8%AF_%D8%AC%D9%88%D8%A7%D9%86", "رامبد_جوان");
+
+        List<SimpleSearchResult> results = new ArrayList<>();
+        results.add(result1);
+        results.add(result2);
+        results.add(result3);
+        queryResult.setSearchResults(results);
+        return queryResult;
+
+    }
 }
