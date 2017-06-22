@@ -9,8 +9,10 @@ import ir.ac.iust.dml.kg.evaluation.repo.QueryRepo;
 import ir.ac.iust.dml.kg.evaluation.repo.UserResponseRepo;
 import ir.ac.iust.dml.kg.evaluation.repo.impl.MongoQueryRepo;
 import ir.ac.iust.dml.kg.evaluation.repo.impl.MongoUserResponseRepo;
+import ir.ac.iust.dml.kg.evaluation.service.KnowledgeGraphEvaluator;
 import ir.ac.iust.dml.kg.evaluation.service.QueryService;
 import ir.ac.iust.dml.kg.evaluation.service.UserResponseService;
+import ir.ac.iust.dml.kg.evaluation.service.impl.KnowledgeGraphEvaluatorImpl;
 import ir.ac.iust.dml.kg.evaluation.service.impl.QueryServiceImpl;
 import ir.ac.iust.dml.kg.evaluation.service.impl.UserResponseServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ public class EvaluationServicesFactory {
 
     private UserResponseService userResponseService;
     private QueryService queryService;
+    private KnowledgeGraphEvaluator knowledgeGraphEvaluator;
 
     @Value("${evaluation.db.dbName}")
     private String dbName;
@@ -56,6 +59,15 @@ public class EvaluationServicesFactory {
             this.userResponseService = createUserReponseService();
         }
         return this.userResponseService;
+    }
+    
+    public KnowledgeGraphEvaluator getKnowledgeGraphEvaluator()
+    {
+        if(this.knowledgeGraphEvaluator==null)
+        {
+            this.knowledgeGraphEvaluator=new KnowledgeGraphEvaluatorImpl(this.getUserResponseService());
+        }
+        return this.knowledgeGraphEvaluator;
     }
 
     private UserResponseService createUserReponseService() {

@@ -68,17 +68,6 @@ public class EntityEvaluationRestServices {
         }
     }
     
-    @RequestMapping(value = "/allqueries", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Query> getAllQueries() throws Exception {
-        return queryService.getAllQueries();
-    }
-    
-    @RequestMapping(value = "/addquery", method = RequestMethod.POST)
-    @ResponseBody
-    public void addQuery(@RequestBody Query query) throws Exception {
-        this.queryService.saveQuery(query);
-    }
 
     private QueryResult getFakeQueryResult() {
         QueryResult queryResult = new QueryResult();
