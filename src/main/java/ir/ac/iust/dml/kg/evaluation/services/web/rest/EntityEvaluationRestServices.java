@@ -44,8 +44,8 @@ public class EntityEvaluationRestServices {
 
     @RequestMapping(value = "/next", method = RequestMethod.GET)
     @ResponseBody
-    public QueryResult getUnreadQueryResult(@RequestParam(required = true) String personId) throws Exception {
-        Query query = queryService.getUnreadQueryByPersonId(personId);
+    public QueryResult getUnreadQueryResult(@RequestParam(required = true) String user) throws Exception {
+        Query query = queryService.getUnreadQueryByPersonId(user);
         List<SimpleSearchResult> searchResults = searchRestService.search(query.getQ());
         if (query != null) {
             QueryResult queryResult = new QueryResult();
@@ -59,8 +59,12 @@ public class EntityEvaluationRestServices {
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ResponseBody
-    public boolean submit(@RequestBody UserResponse userResponse) throws Exception {
+    public boolean submit(@RequestParam(required = false) String user,@RequestBody UserResponse userResponse) throws Exception {
         if (userResponse != null) {
+            if(user!=null)
+            {
+                userResponse.setPersonId(user);
+            }
             userResponseService.saveUserResponse(userResponse);
             return true;
         } else {
