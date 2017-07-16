@@ -12,6 +12,7 @@ import ir.ac.iust.dml.kg.evaluation.services.web.rest.service.SearchRestService;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "evaluation", description = "سرویس‌های ارزیابی")
 public class EntityEvaluationRestServices {
 
-    private  QueryService queryService;
-    private  UserResponseService userResponseService;
-    private final  SearchRestService searchRestService;
-    
+    private QueryService queryService;
+    private UserResponseService userResponseService;
+    private final SearchRestService searchRestService;
+
     private final EvaluationServicesFactory evaluationServicesFactory;
 
     @Autowired
@@ -33,18 +34,21 @@ public class EntityEvaluationRestServices {
         this.evaluationServicesFactory = evaluationServicesFactory;
     }
 
-
-
     @PostConstruct
-    private void init()
-    {
+    private void init() {
         this.userResponseService = evaluationServicesFactory.getUserResponseService();
-        this.queryService = evaluationServicesFactory.getQueryService();       
+        this.queryService = evaluationServicesFactory.getQueryService();
     }
 
     @RequestMapping(value = "/next", method = RequestMethod.GET)
     @ResponseBody
-    public QueryResult getUnreadQueryResult(@RequestParam(required = true) String user) throws Exception {
+    public QueryResult getUnreadQueryResult(@RequestParam(required = false) String user, HttpServletRequest request) throws Exception {
+        if (user == null || user.isEmpty()) {
+            String proxyUserId = request.getHeader("x-auth-identifier");
+            if (proxyUserId != null && !proxyUserId.isEmpty()) {
+                user = proxyUserId;
+            }
+        }
         Query query = queryService.getUnreadQueryByPersonId(user);
         List<SimpleSearchResult> searchResults = searchRestService.search(query.getQ());
         if (query != null) {
@@ -59,19 +63,24 @@ public class EntityEvaluationRestServices {
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ResponseBody
-    public boolean submit(@RequestParam(required = false) String user,@RequestBody UserResponse userResponse) throws Exception {
+    public boolean submit(@RequestParam(required = false) String user, @RequestBody UserResponse userResponse, HttpServletRequest request) throws Exception {
         if (userResponse != null) {
-            if(user!=null)
-            {
+            if (user == null || user.isEmpty()) {
+                String proxyUserId = request.getHeader("x-auth-identifier");
+                if (proxyUserId != null && !proxyUserId.isEmpty()) {
+                    user = proxyUserId;
+                }
+            }
+            if (user != null) {
                 userResponse.setPersonId(user);
             }
+
             userResponseService.saveUserResponse(userResponse);
             return true;
         } else {
             return false;
         }
     }
-    
 
     private QueryResult getFakeQueryResult() {
         QueryResult queryResult = new QueryResult();
