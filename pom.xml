@@ -6,7 +6,7 @@
 
     <groupId>ir.ac.iust.dml.kg.search</groupId>
     <artifactId>evaluation-services</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <name>Search evaluation service project</name>
 
 
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>ir.ac.iust.dml.kg</groupId>
             <artifactId>evaluation</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.5</version>
         </dependency>
         
         <dependency>
