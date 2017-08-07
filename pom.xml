@@ -6,7 +6,7 @@
 
     <groupId>ir.ac.iust.dml.kg.search</groupId>
     <artifactId>evaluation-services</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <name>Search evaluation service project</name>
 
 

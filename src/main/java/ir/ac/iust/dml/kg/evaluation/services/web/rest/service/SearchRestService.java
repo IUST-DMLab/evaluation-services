@@ -8,12 +8,9 @@ package ir.ac.iust.dml.kg.evaluation.services.web.rest.service;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import ir.ac.iust.dml.kg.evaluation.services.web.rest.model.SimpleSearchResult;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +46,17 @@ public class SearchRestService {
             JSONArray entities = searchResponse.getBody().getObject().getJSONArray("entities");
             for (int i = 0; i < entities.length(); i++) {
                 JSONObject entity = entities.getJSONObject(i);
-                simpleSearchResults.add(new SimpleSearchResult(entity.getString("link"), entity.getString("title")));
+                String link="";
+                if(entity.has("link") && !entity.isNull("link"))
+                {
+                    link=entity.getString("link");
+                }
+                String title="";
+                if(entity.has("title") && !entity.isNull("title"))
+                {
+                    title=entity.getString("title");
+                }
+                simpleSearchResults.add(new SimpleSearchResult(link, title));
             }
             return simpleSearchResults;
         } catch (Exception ex) {
