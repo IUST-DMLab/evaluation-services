@@ -46,17 +46,18 @@ public class SearchRestService {
             JSONArray entities = searchResponse.getBody().getObject().getJSONArray("entities");
             for (int i = 0; i < entities.length(); i++) {
                 JSONObject entity = entities.getJSONObject(i);
-                String link="";
-                if(entity.has("link") && !entity.isNull("link"))
-                {
-                    link=entity.getString("link");
+                //evaluting RelationalResults only
+                if (entity.has("resultType") && entity.getString("resultType") != null && entity.getString("resultType").equals("RelationalResult")) {
+                    String link = "";
+                    if (entity.has("link") && !entity.isNull("link")) {
+                        link = entity.getString("link");
+                    }
+                    String title = "";
+                    if (entity.has("title") && !entity.isNull("title")) {
+                        title = entity.getString("title");
+                    }
+                    simpleSearchResults.add(new SimpleSearchResult(link, title));
                 }
-                String title="";
-                if(entity.has("title") && !entity.isNull("title"))
-                {
-                    title=entity.getString("title");
-                }
-                simpleSearchResults.add(new SimpleSearchResult(link, title));
             }
             return simpleSearchResults;
         } catch (Exception ex) {
