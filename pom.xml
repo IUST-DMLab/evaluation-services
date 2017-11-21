@@ -20,6 +20,7 @@
 
 
     <build>
+	<finalName>evaluation_services</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
